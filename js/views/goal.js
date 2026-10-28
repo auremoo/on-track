@@ -7,7 +7,7 @@ import { esc, progressBar, ICONS } from '../utils/ui.js';
 import { showToast } from '../toast.js';
 import { refreshSidebar } from '../app.js';
 import { topbar } from './chrome.js';
-import { weekCard, statusInfo, slotsHtml, emojiOf } from './goal-ui.js';
+import { weekCard, statusInfo, slotsHtml, emojiOf, weekNotes } from './goal-ui.js';
 import { openLogSheet } from './log-sheet.js';
 import { burnupChart } from './chart.js';
 
@@ -60,7 +60,8 @@ function render(root, id) {
       title: `${emojiOf(g)} ${g.name}`,
       subtitle: `${kind.label} · échéance ${formatDateShort(g.deadline)}${S ? ` · ${S} séance${S > 1 ? 's' : ''}/sem.` : ''}`,
       back: { label: 'Objectifs', path: '/goals' },
-      actions: `<button class="icon-btn" data-nav="/goal/${id}/edit" aria-label="Modifier">${ICONS.edit}</button>`,
+      actions: `<button class="icon-btn" data-nav="/goal/${id}/duplicate" aria-label="Dupliquer" title="Dupliquer (saison suivante, tome 2…)">${ICONS.copy}</button>
+        <button class="icon-btn" data-nav="/goal/${id}/edit" aria-label="Modifier" title="Modifier">${ICONS.edit}</button>`,
     })}
     <main class="page">
       <section class="card goal-hero">
@@ -148,6 +149,7 @@ function weekRow(s, w) {
         </div>
         ${!w.off && w.status !== 'future' && w.target ? progressBar(w.done / w.target * 100, 'bar--thin' + (w.status === 'short' ? ' bar--orange' : w.status === 'current' && !w.complete ? ' bar--blue' : '')) : ''}
         ${g.sessionsPerWeek || w.sessions.length ? slotsHtml(s, w, { small: true }) : ''}
+        ${weekNotes(w)}
       </div>
       <div class="week-row__side">
         ${label ? `<span class="week-row__status">${label}</span>` : ''}

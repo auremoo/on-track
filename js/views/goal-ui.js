@@ -29,7 +29,7 @@ export function statusPill(s) {
 export function slotsHtml(s, w, { small = false } = {}) {
   if (!w) return '';
   const S = s.goal.sessionsPerWeek || 0;
-  const done = w.sessions.map(x => `<span class="slot slot--done" title="${esc(fmt(x.amount, s.goal))}">${x.amount}</span>`);
+  const done = w.sessions.map(x => `<span class="slot slot--done ${x.note ? 'slot--noted' : ''}" title="${esc(fmt(x.amount, s.goal) + (x.note ? ` · ${x.note}` : ''))}">${x.amount}</span>`);
   const planned = w.planned.map(n => `<span class="slot ${w.catchUp ? 'slot--catchup' : 'slot--todo'}" title="${w.catchUp ? 'Rattrapage' : 'À faire'}">${n}</span>`);
   const spare = (w.complete || (w.status !== 'future' && !w.planned.length)) && S > w.sessions.length && w.status === 'current'
     ? Array.from({ length: S - w.sessions.length }, () => '<span class="slot slot--spare" title="Facultative : cible atteinte">–</span>')
@@ -90,10 +90,17 @@ export function weekCard(s, { withTitle = true } = {}) {
           <span class="small muted">${w.done} / ${w.target}</span>
         </div>` : ''}
       ${slotsHtml(s, w)}
+      ${w ? weekNotes(w) : ''}
       ${nextLine(s) ? `<div class="week-card__next">${nextLine(s)}</div>` : ''}
       <footer class="week-card__foot">
         <span class="small muted">${esc(positionLabel(g, s.position))} · ${s.pct} %</span>
         ${canLog ? `<button class="btn btn--primary btn--sm" data-log="${g.id}">${ICONS.add}Séance</button>` : ''}
       </footer>
     </section>`;
+}
+
+// Notes des séances d'une semaine, affichées sous ses pastilles
+export function weekNotes(w) {
+  const notes = w.sessions.filter(x => x.note);
+  return notes.length ? `<ul class="week-notes">${notes.map(x => `<li>${esc(x.note)}</li>`).join('')}</ul>` : '';
 }

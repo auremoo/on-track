@@ -350,7 +350,7 @@ select.input-field {
 /* ─── Sidebar ─────────────────────────────────────────────────── */
 
 .sb-header { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-5) var(--space-4) var(--space-4); }
-.sb-logo { width: 32px; height: 32px; }
+.sb-logo { width: 32px; height: 32px; border-radius: 8px; }
 .sb-title { font-size: 19px; font-weight: 700; letter-spacing: -0.3px; }
 
 .sb-nav { display: flex; flex-direction: column; gap: 2px; padding: 0 var(--space-2); }
@@ -921,4 +921,40 @@ select.input-field { -webkit-appearance: none; appearance: none; background-imag
   .goal-columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
   .history__row:hover { background: var(--gray-6); }
   .planning-weeks { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
+}
+
+/* ─── Charge par semaine, notes ───────────────────────────────── */
+
+.load { display: flex; align-items: flex-end; gap: 3px; height: 150px; padding: 0 12px; overflow-x: auto; scrollbar-width: none; }
+.load::-webkit-scrollbar { display: none; }
+.load__col { flex: 1 1 0; min-width: 12px; height: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.load__count { font-size: 10px; color: var(--text-secondary); font-variant-numeric: tabular-nums; height: 12px; }
+.load__bar { flex: 1; width: 100%; max-width: 30px; display: flex; flex-direction: column; justify-content: flex-end; border-radius: 4px; overflow: hidden; }
+.load__seg--done { background: var(--st-done); }
+.load__seg--missed { background: var(--ios-orange); opacity: 0.75; }
+.load__seg--todo { background: var(--ios-blue); opacity: 0.35; }
+.load__label { font-size: 10px; color: var(--text-secondary); white-space: nowrap; height: 12px; width: 100%; display: flex; justify-content: center; overflow: visible; }
+.load__col--current .load__label, .load__col--current .load__count { color: var(--ios-blue); font-weight: 700; }
+.load__col--current .load__seg--todo { opacity: 0.7; }
+
+.week-notes { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
+.week-notes li { font-size: 12px; color: var(--text-secondary); font-style: italic; line-height: 1.35; overflow-wrap: anywhere; }
+.week-notes li::before { content: '“'; }
+.week-notes li::after { content: '”'; }
+.week-card .week-notes { margin-top: var(--space-2); }
+.slot--noted { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55); }
+
+/* ─── Mode sombre : contrastes ────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  .pill--ok { background: rgba(48, 209, 88, 0.18); color: #4ADE80; }
+  .pill--warn { background: rgba(255, 159, 10, 0.2); color: #FFB340; }
+  .pill--bad { background: rgba(255, 69, 58, 0.2); color: #FF6961; }
+  .btn--secondary { background: #3A3A3C; }
+  .seg { background: #1C1C1E; }
+  .seg__btn--on { background: #48484A; }
+  .slot--spare { box-shadow: inset 0 0 0 1.5px #48484A; }
+  .slot--noted { box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.35); }
+  .pgrid__goal { background: var(--bg-card); }
+  .week-row--current { background: rgba(10, 132, 255, 0.16); }
 }

@@ -1,7 +1,7 @@
 // Création / modification d'un objectif, avec aperçu du plan calculé en direct.
 
 import { getGoal, getSessions, createGoal, updateGoal, deleteGoal } from '../store.js';
-import { KINDS, computeGoal, distribute, fmt, unitOf } from '../utils/plan.js';
+import { KINDS, computeGoal, distribute, fmt, unitOf, planWeeks } from '../utils/plan.js';
 import { today, mondayOf, addDays, formatDateShort } from '../utils/dates.js';
 import { esc } from '../utils/ui.js';
 import { showToast } from '../toast.js';
@@ -19,26 +19,34 @@ const LABELS = {
   custom:   ['Nom de l\'objectif', 'Total à atteindre', 'Déjà fait'],
 };
 
-export function mount(container, id) {
+// duplicateOf : identifiant d'un objectif dont on reprend le réglage (sans les séances)
+export function mount(container, id, { duplicateOf = null } = {}) {
   const editing = id ? getGoal(id) : null;
   if (id && !editing) { location.hash = '/goals'; return; }
+  const source = duplicateOf ? getGoal(duplicateOf) : null;
   const t = today();
   const cur = mondayOf(t);
   const next = addDays(cur, 7);
-  const g = editing || {
+  const g = editing || (source ? {
+    kind: source.kind, name: `${source.name} (copie)`, unit: source.unit, seasons: source.seasons,
+    total: source.total, from: 0, sessionsPerWeek: source.sessionsPerWeek,
+    // Même durée que l'objectif d'origine, à partir de cette semaine
+    deadline: addDays(cur, 7 * planWeeks(source).length - 1), startWeek: cur,
+  } : {
     kind: 'book', name: '', total: '', from: 0, sessionsPerWeek: 3,
     deadline: addDays(cur, 7 * 6 - 1), startWeek: cur,
-  };
+  });
   let kind = g.kind;
 
   container.innerHTML = `
     <div class="view">
       ${topbar({
-        title: editing ? 'Modifier l\'objectif' : 'Nouvel objectif',
+        title: editing ? 'Modifier l\'objectif' : source ? 'Dupliquer l\'objectif' : 'Nouvel objectif',
         back: editing ? { label: 'Retour', path: `/goal/${id}` } : { label: 'Objectifs', path: '/goals' },
       })}
       <main class="page page--narrow">
         <form id="goal-form" class="form" novalidate>
+          ${source ? `<p class="hint">Réglages repris de « ${esc(source.name)} » : ajuste le nom, le total et l'échéance. Les séances ne sont pas copiées.</p>` : ''}
           <section class="card">
             <h2 class="card__heading">Type</h2>
             <div class="kind-chips">

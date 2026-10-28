@@ -5,8 +5,9 @@ import { fmt, unitOf } from '../utils/plan.js';
 import { today, mondayOf, addDays, formatRange, formatDateShort } from '../utils/dates.js';
 import { esc, progressBar } from '../utils/ui.js';
 import { topbar, globalTabBar } from './chrome.js';
-import { emojiOf, slotsHtml } from './goal-ui.js';
+import { emojiOf, slotsHtml, weekNotes } from './goal-ui.js';
 import { openLogSheet } from './log-sheet.js';
+import { loadChart } from './chart.js';
 
 const MODE_KEY = 'ontrack_planning_mode';
 let showPast = false;
@@ -51,6 +52,13 @@ function render(root) {
           </div>
           ${mode === 'weeks' && all.some(m => m < cur) ? `<button class="link-btn" data-past>${showPast ? 'Masquer' : 'Afficher'} les semaines passées</button>` : ''}
         </div>
+        <section class="card">
+          <div class="card__heading-row">
+            <h2 class="card__heading">Charge par semaine</h2>
+            <span class="muted small">en séances, tous objectifs</span>
+          </div>
+          ${loadChart(summaries, all, cur)}
+        </section>
         ${mode === 'grid' ? grid(summaries, all, cur) : weekList(summaries, mondays, cur)}` : `
         <div class="empty-state">
           <div class="empty-state__icon">🗓️</div>
@@ -98,7 +106,7 @@ function pweekRow(s, w) {
     <div class="prow prow--${w.status}">
       <button class="prow__name link-like" data-nav="/goal/${g.id}"><span>${emojiOf(g)}</span><span>${esc(g.name)}</span></button>
       <div class="prow__amount">${amount}</div>
-      ${!w.off ? `<div class="prow__slots">${slotsHtml(s, w, { small: true })}</div>` : ''}
+      ${!w.off ? `<div class="prow__slots">${slotsHtml(s, w, { small: true })}${weekNotes(w)}</div>` : ''}
       ${w.status === 'current' && !w.complete && s.status !== 'done' ? `<button class="chip chip--sm prow__log" data-log="${g.id}">+ Séance</button>` : ''}
     </div>`;
 }

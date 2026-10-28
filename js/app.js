@@ -28,6 +28,7 @@ const ROUTES = [
   { re: /^\/settings$/,           fn: () => mountSettings(app) },
   { re: /^\/goal\/([\w-]+)$/,      fn: m => mountGoal(app, m[1]) },
   { re: /^\/goal\/([\w-]+)\/edit$/, fn: m => mountGoalForm(app, m[1]) },
+  { re: /^\/goal\/([\w-]+)\/duplicate$/, fn: m => mountGoalForm(app, null, { duplicateOf: m[1] }) },
 ];
 
 let _lastPath = '/';

@@ -66,3 +66,37 @@ export function burnupChart(s) {
       <span><i class="legend__line legend__line--ideal"></i>Prévu au départ</span>
     </div>`;
 }
+
+// Charge par semaine, tous objectifs confondus, comptée en séances (unité commune aux objectifs) :
+// faites (vert), prévues non faites des semaines passées (orange), à faire (bleu).
+export function loadChart(summaries, mondays, cur) {
+  const cols = mondays.map(m => {
+    let done = 0, missed = 0, todo = 0;
+    for (const s of summaries) {
+      const w = s.weeks.find(x => x.monday === m);
+      if (!w) continue;
+      done += w.sessions.length;
+      if (w.off || !w.target) continue;
+      if (m < cur) missed += Math.max(0, (s.goal.sessionsPerWeek || 1) - w.sessions.length) * (w.complete ? 0 : 1);
+      else todo += w.planned.length;
+    }
+    return { m, done, missed, todo, total: done + missed + todo };
+  });
+  const max = Math.max(1, ...cols.map(c => c.total));
+  const step = Math.max(1, Math.ceil(cols.length / 6));
+  const seg = (n, cls) => n ? `<div class="load__seg load__seg--${cls}" style="height:${n / max * 100}%"></div>` : '';
+  return `
+    <div class="load">
+      ${cols.map((c, i) => `
+        <div class="load__col ${c.m === cur ? 'load__col--current' : ''}" title="${formatDateShort(c.m)} : ${c.done} faite${c.done > 1 ? 's' : ''}${c.missed ? `, ${c.missed} manquée${c.missed > 1 ? 's' : ''}` : ''}${c.todo ? `, ${c.todo} à faire` : ''}">
+          <div class="load__count">${c.total || ''}</div>
+          <div class="load__bar">${seg(c.todo, 'todo')}${seg(c.missed, 'missed')}${seg(c.done, 'done')}</div>
+          <div class="load__label">${i % step === 0 ? formatDateShort(c.m) : ''}</div>
+        </div>`).join('')}
+    </div>
+    <div class="legend legend--wrap">
+      <span><i class="dot dot--done"></i>Faites</span>
+      <span><i class="dot dot--skipped"></i>Manquées</span>
+      <span><i class="dot" style="background:var(--ios-blue)"></i>À faire</span>
+    </div>`;
+}
