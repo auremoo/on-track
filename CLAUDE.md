@@ -23,13 +23,13 @@ js/views/
   chrome.js           topbar() + globalTabBar()
   sidebar.js          sidebar ordinateur
   home.js             « Cette semaine » : tous les objectifs actifs ; weekTotals()
-  planning.js         tous les plans mélangés : liste par semaine ou frise (grille objectifs × semaines)
+  planning.js         charge par semaine + tous les plans mélangés : liste par semaine ou frise (grille objectifs × semaines)
   goals.js            liste des objectifs
   goal.js             page d'un objectif : KPI, semaine, plan (bouton Off), courbe, historique, bilan
-  goal-form.js        création / modification, aperçu du plan en direct
+  goal-form.js        création / modification / duplication (/goal/:id/duplicate), aperçu du plan en direct
   log-sheet.js        saisie / modification / suppression d'une séance (quantité ou position)
-  goal-ui.js          statusInfo, statusPill, slotsHtml (pastilles de séances), weekHeadline, weekCard
-  chart.js            courbe cumulée SVG (prévu au départ / réel / plan recalculé)
+  goal-ui.js          statusInfo, statusPill, slotsHtml (pastilles de séances), weekNotes, weekHeadline, weekCard
+  chart.js            courbe cumulée SVG (prévu au départ / réel / plan recalculé) + loadChart (charge par semaine, en séances)
   settings.js         export JSON, déconnexion
 js/utils/ui.js, dates.js, crypto.js, markdown.js (repris des apps sœurs)
 tests/plan.test.mjs   tests du moteur
@@ -56,4 +56,5 @@ tests/plan.test.mjs   tests du moteur
 - Synchro `state.json` regroupée (600 ms), vidée immédiatement quand l'app passe en arrière-plan ; SHA relu avant chaque PUT. Tous les commits de données portent `[skip ci]`.
 - sessionStorage : `ontrack_auth`, `ontrack_pat` (distinctes des apps sœurs, même origine `auremoo.github.io`). localStorage : `ontrack_planning_mode` (préférence d'affichage seulement).
 - Le sel PBKDF2 (`pacing-app-v1`) est volontairement identique aux apps sœurs : un token chiffré est réutilisable d'une app à l'autre.
+- Mode sombre : variables de tokens.css + bloc « Mode sombre : contrastes » en fin de components.css.
 - Toute modification du moteur s'accompagne d'un test dans `tests/plan.test.mjs`.

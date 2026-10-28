@@ -43,9 +43,9 @@ Livre de 300 pages, 6 semaines, 3 séances par semaine :
 | Écran | Contenu |
 |---|---|
 | Cette semaine | La semaine en cours de chaque objectif actif : reste à faire, séances (faites / prévues / rattrapage), prochaine séance, bouton « + Séance » |
-| Planning | Tous les objectifs mélangés : **Semaines** (une carte par semaine avec chaque objectif) ou **Frise** (objectifs en lignes, semaines en colonnes, total de séances par semaine) |
+| Planning | Graphique de charge par semaine (séances faites, manquées, à faire), puis tous les objectifs mélangés : **Semaines** (une carte par semaine avec chaque objectif) ou **Frise** (objectifs en lignes, semaines en colonnes, total de séances par semaine) |
 | Objectifs | En cours, en pause, terminés / archivés |
-| Objectif | Avancement, indicateurs, semaine en cours, plan semaine par semaine (avec « Off »), courbe prévu / réel / plan recalculé, historique des séances (modifiables), bilan une fois terminé |
+| Objectif | Avancement, indicateurs, semaine en cours, plan semaine par semaine (avec « Off »), courbe prévu / réel / plan recalculé, historique des séances (modifiables), notes des séances visibles dans le plan, bilan une fois terminé. Bouton **Dupliquer** (saison suivante, tome 2…) : réglages repris, sans les séances |
 | Réglages | Export JSON, documentation, déconnexion |
 
 **Ordinateur (≥ 900 px)** : sidebar permanente, saisie d'une séance en tiroir à droite.
