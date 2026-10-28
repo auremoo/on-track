@@ -12,7 +12,10 @@
       "seasons": null,
       "id": "le-fils-de-klara-h",
       "status": "active",
-      "createdAt": "2026-10-28T13:26:59.049Z"
+      "createdAt": "2026-10-28T13:26:59.049Z",
+      "offWeeks": [
+        "2026-11-02"
+      ]
     }
   ]
 }
