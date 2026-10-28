@@ -7,7 +7,7 @@ import { esc, progressBar, ICONS } from '../utils/ui.js';
 import { showToast } from '../toast.js';
 import { refreshSidebar } from '../app.js';
 import { topbar } from './chrome.js';
-import { weekCard, statusInfo, slotsHtml, emojiOf, weekNotes } from './goal-ui.js';
+import { weekCard, statusInfo, slotsHtml, weekNotes } from './goal-ui.js';
 import { openLogSheet } from './log-sheet.js';
 import { burnupChart } from './chart.js';
 
@@ -57,7 +57,7 @@ function render(root, id) {
 
   root.innerHTML = `
     ${topbar({
-      title: `${emojiOf(g)} ${g.name}`,
+      title: g.name,
       subtitle: `${kind.label} · échéance ${formatDateShort(g.deadline)}${S ? ` · ${S} séance${S > 1 ? 's' : ''}/sem.` : ''}`,
       back: { label: 'Objectifs', path: '/goals' },
       actions: `<button class="icon-btn" data-nav="/goal/${id}/duplicate" aria-label="Dupliquer" title="Dupliquer (saison suivante, tome 2…)">${ICONS.copy}</button>
@@ -183,7 +183,7 @@ function bilan(s) {
   const weeksUsed = used.length || 1;
   return `
     <section class="card bilan">
-      <h2 class="card__heading">Bilan 🎉</h2>
+      <h2 class="card__heading">Bilan</h2>
       <dl class="facts">
         <dt>Durée</dt><dd>${weeksUsed} semaine${weeksUsed > 1 ? 's' : ''} actives sur ${s.activeWeeks} prévues</dd>
         <dt>Séances</dt><dd>${s.sessionCount} · en moyenne ${fmt(Math.round(s.done / Math.max(1, s.sessionCount)), g)} par séance</dd>

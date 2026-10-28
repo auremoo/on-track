@@ -3,9 +3,9 @@
 import { getGoals, isActive, summaryOf } from '../store.js';
 import { fmt, unitOf } from '../utils/plan.js';
 import { today, mondayOf, addDays, formatRange, formatDateShort } from '../utils/dates.js';
-import { esc, progressBar } from '../utils/ui.js';
+import { esc, progressBar, ICONS } from '../utils/ui.js';
 import { topbar, globalTabBar } from './chrome.js';
-import { emojiOf, slotsHtml, weekNotes } from './goal-ui.js';
+import { kindIcon, slotsHtml, weekNotes } from './goal-ui.js';
 import { openLogSheet } from './log-sheet.js';
 import { loadChart } from './chart.js';
 
@@ -61,7 +61,7 @@ function render(root) {
         </section>
         ${mode === 'grid' ? grid(summaries, all, cur) : weekList(summaries, mondays, cur)}` : `
         <div class="empty-state">
-          <div class="empty-state__icon">🗓️</div>
+          <div class="empty-state__icon empty-state__icon--svg">${ICONS.calendar}</div>
           <div class="empty-state__title">Rien de planifié</div>
           <div class="empty-state__body">Le planning réunit les plans de tous tes objectifs actifs.</div>
           <button class="btn btn--primary" data-nav="/new-goal">Créer un objectif</button>
@@ -99,12 +99,12 @@ function weekList(summaries, mondays, cur) {
 function pweekRow(s, w) {
   const g = s.goal;
   let amount;
-  if (w.off) amount = '<span class="muted">Off 🌴</span>';
+  if (w.off) amount = '<span class="muted">Off</span>';
   else if (w.status === 'future') amount = w.target ? esc(fmt(w.target, g)) : '<span class="muted">Rien de prévu</span>';
   else amount = `${w.done} / ${esc(fmt(w.target, g))}${w.complete ? ' ✓' : ''}`;
   return `
     <div class="prow prow--${w.status}">
-      <button class="prow__name link-like" data-nav="/goal/${g.id}"><span>${emojiOf(g)}</span><span>${esc(g.name)}</span></button>
+      <button class="prow__name link-like" data-nav="/goal/${g.id}">${kindIcon(g, 'sm')}<span>${esc(g.name)}</span></button>
       <div class="prow__amount">${amount}</div>
       ${!w.off ? `<div class="prow__slots">${slotsHtml(s, w, { small: true })}${weekNotes(w)}</div>` : ''}
       ${w.status === 'current' && !w.complete && s.status !== 'done' ? `<button class="chip chip--sm prow__log" data-log="${g.id}">+ Séance</button>` : ''}
@@ -131,7 +131,7 @@ function grid(summaries, mondays, cur) {
         <tbody>
           ${summaries.map(s => `
             <tr>
-              <th class="pgrid__goal"><button class="link-like" data-nav="/goal/${s.goal.id}">${emojiOf(s.goal)} ${esc(s.goal.name)}</button>
+              <th class="pgrid__goal"><button class="link-like pgrid__name" data-nav="/goal/${s.goal.id}">${kindIcon(s.goal, 'sm')}<span>${esc(s.goal.name)}</span></button>
                 <div class="pgrid__unit">${esc(unitOf(s.goal).many)}</div></th>
               ${mondays.map(m => cell(s, s.weeks.find(w => w.monday === m), m === cur)).join('')}
             </tr>`).join('')}

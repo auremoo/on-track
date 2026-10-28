@@ -45,7 +45,7 @@ tests/plan.test.mjs   tests du moteur
 
 ## Données
 
-- `goals.json` : `{ goals: [{ id, kind, name, emoji, unit|null, seasons|null, total, from, startWeek, deadline, sessionsPerWeek|null, offWeeks, status: 'active'|'paused'|'archived', createdAt }] }`
+- `goals.json` : `{ goals: [{ id, kind, name, unit|null, seasons|null, total, from, startWeek, deadline, sessionsPerWeek|null, offWeeks, status: 'active'|'paused'|'archived', createdAt }] }`
 - `state.json` : `{ version: 1, sessions: { goalId: [{ id, week, amount, at, note? }] }, lastUpdated }`
 
 ## Conventions

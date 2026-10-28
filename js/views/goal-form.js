@@ -3,7 +3,7 @@
 import { getGoal, getSessions, createGoal, updateGoal, deleteGoal } from '../store.js';
 import { KINDS, computeGoal, distribute, fmt, unitOf, planWeeks } from '../utils/plan.js';
 import { today, mondayOf, addDays, formatDateShort } from '../utils/dates.js';
-import { esc } from '../utils/ui.js';
+import { esc, KIND_ICONS } from '../utils/ui.js';
 import { showToast } from '../toast.js';
 import { refreshSidebar } from '../app.js';
 import { topbar } from './chrome.js';
@@ -52,7 +52,7 @@ export function mount(container, id, { duplicateOf = null } = {}) {
             <div class="kind-chips">
               ${Object.entries(KINDS).map(([k, v]) => `
                 <button type="button" class="kind-chip ${k === kind ? 'kind-chip--on' : ''}" data-kind="${k}">
-                  <span class="kind-chip__emoji">${v.emoji}</span><span>${esc(v.label)}</span>
+                  <span class="kind-chip__icon">${KIND_ICONS[k]}</span><span>${esc(v.label)}</span>
                 </button>`).join('')}
             </div>
           </section>
@@ -173,7 +173,6 @@ export function mount(container, id, { duplicateOf = null } = {}) {
       deadline: $('#f-deadline').value,
       sessionsPerWeek: Math.round(Number($('#f-sessions').value)) || null,
       startWeek: startWeek(),
-      emoji: KINDS[kind].emoji,
     };
     if (kind === 'custom') data.unit = { one: $('#f-unit-one').value.trim() || 'unité', many: $('#f-unit-many').value.trim() || $('#f-unit-one').value.trim() || 'unités' };
     else data.unit = null;

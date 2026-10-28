@@ -2,7 +2,7 @@
 
 import { getGoals, isActive, summaryOf } from '../store.js';
 import { ICONS, esc, progressBar } from '../utils/ui.js';
-import { emojiOf, statusInfo } from './goal-ui.js';
+import { kindIcon, statusInfo } from './goal-ui.js';
 import { weekTotals } from './home.js';
 
 export function mountSidebar(container, path = '/') {
@@ -57,7 +57,7 @@ function goalItem(s, activeId) {
   const info = statusInfo(s);
   return `
     <button class="sb-project ${g.id === activeId ? 'sb-project--active' : ''}" data-nav="/goal/${g.id}">
-      <div class="sb-project__name">${emojiOf(g)} ${esc(g.name)}</div>
+      <div class="sb-project__name">${kindIcon(g, 'sm')}<span>${esc(g.name)}</span></div>
       <div class="sb-project__meta">${s.pct} % · <span class="sb-status sb-status--${info.cls}">${info.label}</span></div>
       ${progressBar(s.pct, 'bar--thin')}
     </button>`;

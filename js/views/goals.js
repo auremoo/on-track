@@ -3,9 +3,9 @@
 import { getGoals, summaryOf } from '../store.js';
 import { KINDS, fmt, positionLabel } from '../utils/plan.js';
 import { formatDateShort } from '../utils/dates.js';
-import { esc, progressBar } from '../utils/ui.js';
+import { esc, progressBar, ICONS } from '../utils/ui.js';
 import { topbar, globalTabBar } from './chrome.js';
-import { statusPill, emojiOf } from './goal-ui.js';
+import { statusPill, kindIcon } from './goal-ui.js';
 
 export function mount(container) {
   const summaries = getGoals().map(g => summaryOf(g.id));
@@ -23,7 +23,7 @@ export function mount(container) {
           <h2 class="section-header">${label}</h2>
           <div class="goal-grid">${list.map(card).join('')}</div>`).join('') || `
           <div class="empty-state">
-            <div class="empty-state__icon">🎯</div>
+            <div class="empty-state__icon empty-state__icon--svg">${ICONS.goals}</div>
             <div class="empty-state__title">Aucun objectif</div>
             <div class="empty-state__body">Livre, série, cours, révisions, écriture… tout ce qui se compte et a une échéance.</div>
             <button class="btn btn--primary" data-nav="/new-goal">Créer un objectif</button>
@@ -39,7 +39,7 @@ function card(s) {
   return `
     <article class="card card--link goal-card goal-card--${g.status || 'active'}" data-nav="/goal/${g.id}">
       <div class="goal-card__head">
-        <div class="goal-card__name"><span class="goal-card__emoji">${emojiOf(g)}</span>${esc(g.name)}</div>
+        <div class="goal-card__name">${kindIcon(g)}<span>${esc(g.name)}</span></div>
         ${g.status === 'paused' ? '<span class="pill pill--muted">En pause</span>' : g.status === 'archived' ? '<span class="pill pill--muted">Archivé</span>' : statusPill(s)}
       </div>
       <div class="goal-card__progress">${progressBar(s.pct)}<span class="small muted">${s.pct} %</span></div>

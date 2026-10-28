@@ -2,7 +2,7 @@
 
 import { getGoals, isActive, summaryOf } from '../store.js';
 import { today, mondayOf, addDays, formatRange } from '../utils/dates.js';
-import { esc } from '../utils/ui.js';
+import { esc, ICONS } from '../utils/ui.js';
 import { topbar, globalTabBar } from './chrome.js';
 import { weekCard } from './goal-ui.js';
 import { openLogSheet } from './log-sheet.js';
@@ -60,7 +60,7 @@ function emptyState() {
   const hasGoals = getGoals().length > 0;
   return `
     <div class="empty-state">
-      <div class="empty-state__icon">🎯</div>
+      <div class="empty-state__icon empty-state__icon--svg">${ICONS.goals}</div>
       <div class="empty-state__title">${hasGoals ? 'Rien en cours' : 'Aucun objectif'}</div>
       <div class="empty-state__body">Un livre à finir, une série, un cours… Donne un total et une échéance : l'app te dit quoi faire chaque semaine.</div>
       <button class="btn btn--primary" data-nav="/new-goal">${esc('Créer un objectif')}</button>

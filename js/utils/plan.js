@@ -6,13 +6,13 @@ import { mondayOf, addDays, today } from './dates.js';
 
 // Modèles d'objectifs. `position` : la saisie par défaut est la position atteinte (« je suis page 142 »).
 export const KINDS = {
-  book:     { label: 'Livre',               emoji: '📖', one: 'page',     many: 'pages',     position: true },
-  series:   { label: 'Série',               emoji: '📺', one: 'épisode',  many: 'épisodes',  position: false },
-  course:   { label: 'Cours / formation',   emoji: '🎓', one: 'module',   many: 'modules',   position: false },
-  revision: { label: 'Révisions',           emoji: '📚', one: 'chapitre', many: 'chapitres', position: false },
-  audio:    { label: 'Livre audio / podcast', emoji: '🎧', one: 'minute', many: 'minutes',   position: false },
-  writing:  { label: 'Écriture',            emoji: '✍️', one: 'mot',      many: 'mots',      position: false },
-  custom:   { label: 'Autre',               emoji: '🎯', one: 'unité',    many: 'unités',    position: false },
+  book:     { label: 'Livre',               one: 'page',     many: 'pages',     position: true },
+  series:   { label: 'Série',               one: 'épisode',  many: 'épisodes',  position: false },
+  course:   { label: 'Cours / formation',   one: 'module',   many: 'modules',   position: false },
+  revision: { label: 'Révisions',           one: 'chapitre', many: 'chapitres', position: false },
+  audio:    { label: 'Livre audio / podcast', one: 'minute', many: 'minutes',   position: false },
+  writing:  { label: 'Écriture',            one: 'mot',      many: 'mots',      position: false },
+  custom:   { label: 'Autre',               one: 'unité',    many: 'unités',    position: false },
 };
 
 export function unitOf(goal) {

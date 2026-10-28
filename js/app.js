@@ -9,6 +9,7 @@ import { mount as mountSettings } from './views/settings.js';
 import { mountSidebar }           from './views/sidebar.js';
 import { initStore }              from './store.js';
 import { configure }              from './github-api.js';
+import { ICONS }                  from './utils/ui.js';
 
 export { showToast } from './toast.js';
 
@@ -77,7 +78,7 @@ async function boot() {
   } catch (err) {
     app.innerHTML = `
       <div class="loading-state loading-state--full">
-        <div style="font-size:40px">⚠️</div>
+        <div class="empty-state__icon empty-state__icon--svg empty-state__icon--bad">${ICONS.alert}</div>
         <div style="font-size:17px;font-weight:600">Erreur de connexion</div>
         <div class="muted" style="max-width:320px;text-align:center">${err.message}</div>
       </div>`;

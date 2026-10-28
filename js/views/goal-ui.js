@@ -1,16 +1,18 @@
 // Composants partagés : statut d'un objectif, pastilles de séances, carte « semaine en cours ».
 
-import { fmt, positionLabel, KINDS } from '../utils/plan.js';
+import { fmt, positionLabel } from '../utils/plan.js';
 import { formatRange, formatDateShort, addDays } from '../utils/dates.js';
-import { esc, progressBar, ICONS } from '../utils/ui.js';
+import { esc, progressBar, ICONS, KIND_ICONS } from '../utils/ui.js';
 
-export const emojiOf = goal => goal.emoji || KINDS[goal.kind]?.emoji || '🎯';
+// Pastille ronde avec l'icône du type d'objectif ; size : 'sm' (listes) ou 'md' (cartes)
+export const kindIcon = (goal, size = 'md') =>
+  `<span class="kind-icon kind-icon--${size}" aria-hidden="true">${KIND_ICONS[goal.kind] || KIND_ICONS.custom}</span>`;
 
 // { cls, label, detail } — cls : classe de pastille (ok / warn / bad / muted / accent)
 export function statusInfo(s) {
   const g = s.goal;
   switch (s.status) {
-    case 'done':    return { cls: 'ok', label: 'Terminé', detail: 'Objectif atteint 🎉' };
+    case 'done':    return { cls: 'ok', label: 'Terminé', detail: 'Objectif atteint' };
     case 'before':  return { cls: 'muted', label: 'À venir', detail: `Démarre le lundi ${formatDateShort(s.weeks[0]?.monday)}` };
     case 'ahead':   return { cls: 'accent', label: 'En avance', detail: `${fmt(s.gap, g)} d'avance sur le rythme prévu` };
     case 'late':    return { cls: s.gap > s.idealWeekly ? 'bad' : 'warn', label: 'En retard', detail: `${fmt(s.gap, g)} de retard, lissé sur les semaines restantes` };
@@ -44,7 +46,7 @@ export function weekHeadline(s) {
   if (s.status === 'done') return `Objectif atteint : ${positionLabel(g, s.position)}`;
   if (s.phase === 'before') return `Démarre le lundi ${formatDateShort(s.weeks[0].monday)} · ${fmt(s.weeks[0].target, g)} la 1re semaine`;
   if (s.phase === 'after' || !w) return `Échéance dépassée · reste ${fmt(s.remaining, g)}`;
-  if (w.off) return 'Semaine off 🌴';
+  if (w.off) return 'Semaine off';
   if (w.complete) return `Semaine bouclée ✓ ${w.done} / ${fmt(w.target, g)}`;
   const S = g.sessionsPerWeek;
   if (w.catchUp) return `Séances prévues faites · rattrapage : ${fmt(w.remaining, g)}`;
@@ -75,7 +77,7 @@ export function weekCard(s, { withTitle = true } = {}) {
       ${withTitle ? `
         <header class="week-card__head">
           <button class="week-card__title link-like" data-nav="/goal/${g.id}">
-            <span class="week-card__emoji">${emojiOf(g)}</span><span>${esc(g.name)}</span>
+            ${kindIcon(g)}<span>${esc(g.name)}</span>
           </button>
           ${statusPill(s)}
         </header>` : `

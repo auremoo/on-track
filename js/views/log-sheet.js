@@ -6,7 +6,7 @@ import { mondayOf, addDays, today, formatRange } from '../utils/dates.js';
 import { esc, openSheet, ICONS } from '../utils/ui.js';
 import { showToast } from '../toast.js';
 import { refreshSidebar } from '../app.js';
-import { emojiOf, weekHeadline } from './goal-ui.js';
+import { weekHeadline } from './goal-ui.js';
 
 function positionFieldLabel(goal) {
   if (goal.kind === 'book') return 'Page atteinte';
@@ -29,7 +29,7 @@ export function openLogSheet(goalId, { session = null, onDone } = {}) {
   let mode = !editing && KINDS[goal.kind]?.position ? 'position' : 'amount';
 
   const sheet = openSheet({
-    title: editing ? 'Modifier la séance' : `${emojiOf(goal)} ${goal.name}`,
+    title: editing ? 'Modifier la séance' : goal.name,
     html: `
       <form class="log-form" autocomplete="off">
         ${editing ? '' : `
@@ -107,7 +107,7 @@ export function openLogSheet(goalId, { session = null, onDone } = {}) {
     }
     const pos = basePos + a;
     const parts = [mode === 'position' ? `${fmt(a, goal)} cette séance` : `→ ${positionLabel(goal, Math.min(pos, goal.total))}`];
-    if (pos >= goal.total) parts.push('objectif atteint 🎉');
+    if (pos >= goal.total) parts.push('objectif atteint');
     else if (s.current && !s.current.off && !editing) {
       const left = s.current.remaining - a;
       parts.push(left <= 0 ? 'semaine bouclée ✓' : `reste ${fmt(left, goal)} cette semaine`);
@@ -171,7 +171,7 @@ function weekOptions(s, cur, prev, selected) {
 // Récapitulatif après une séance : ce qu'il reste à faire, recalculé
 function afterLogMessage(goalId) {
   const s = summaryOf(goalId);
-  if (s.status === 'done') return 'Objectif atteint 🎉';
+  if (s.status === 'done') return 'Objectif atteint';
   const w = s.current;
   if (!w || w.off) return 'Séance enregistrée';
   if (w.complete) return 'Semaine bouclée ✓';

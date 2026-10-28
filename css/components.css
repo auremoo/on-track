@@ -751,7 +751,6 @@ select.input-field {
 .week-card__head .card__heading { margin: 0; }
 .week-card__title { display: flex; align-items: center; gap: var(--space-2); font-size: 17px; font-weight: 600; color: var(--text-primary); text-align: left; min-width: 0; }
 .week-card__title span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.week-card__emoji { font-size: 20px; }
 .week-card__headline { font-size: 15px; font-weight: 500; line-height: 1.4; }
 .week-card__progress { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-3); }
 .week-card__progress .small { font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -778,7 +777,6 @@ select.input-field {
 .goal-card { display: flex; flex-direction: column; gap: var(--space-2); }
 .goal-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
 .goal-card__name { font-size: 17px; font-weight: 600; display: flex; gap: var(--space-2); align-items: center; }
-.goal-card__emoji { font-size: 20px; }
 .goal-card__progress { display: flex; align-items: center; gap: var(--space-3); }
 .goal-card__meta { display: flex; flex-wrap: wrap; gap: 4px var(--space-3); font-size: 13px; color: var(--text-secondary); }
 .goal-card--paused, .goal-card--archived { opacity: 0.7; }
@@ -893,7 +891,8 @@ thead .pgrid__col--current { color: var(--ios-blue) !important; }
 
 .kind-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-2); }
 .kind-chip { display: flex; align-items: center; gap: var(--space-2); padding: 10px 12px; border-radius: var(--radius-md); background: var(--gray-6); font-size: 14px; font-weight: 500; color: var(--text-primary); text-align: left; cursor: pointer; box-shadow: inset 0 0 0 1.5px transparent; }
-.kind-chip__emoji { font-size: 18px; }
+.kind-chip__icon { width: 20px; height: 20px; color: var(--ios-blue); flex-shrink: 0; }
+.kind-chip__icon svg { width: 100%; height: 100%; }
 .kind-chip--on { background: var(--ios-blue-tint); box-shadow: inset 0 0 0 1.5px var(--ios-blue); color: var(--ios-blue); font-weight: 600; }
 
 .radio-list { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-2); }
@@ -958,3 +957,15 @@ select.input-field { -webkit-appearance: none; appearance: none; background-imag
   .pgrid__goal { background: var(--bg-card); }
   .week-row--current { background: rgba(10, 132, 255, 0.16); }
 }
+
+/* ─── Icônes de type d'objectif ───────────────────────────────── */
+
+.kind-icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 50%; background: var(--ios-blue-tint); color: var(--ios-blue); }
+.kind-icon svg { width: 58%; height: 58%; }
+.kind-icon--md { width: 30px; height: 30px; }
+.kind-icon--sm { width: 22px; height: 22px; }
+.sb-project__name, .pgrid__name { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.sb-project__name span, .pgrid__name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.empty-state__icon--svg { width: 64px; height: 64px; border-radius: 50%; background: var(--ios-blue-tint); color: var(--ios-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+.empty-state__icon--svg svg { width: 32px; height: 32px; }
+.empty-state__icon--bad { background: rgba(255, 59, 48, 0.12); color: var(--ios-red); }
