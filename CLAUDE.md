@@ -22,8 +22,8 @@ js/views/
   lock.js             écran mot de passe (repris des apps sœurs)
   chrome.js           topbar() + globalTabBar()
   sidebar.js          sidebar ordinateur
-  home.js             onglet Semaine : la semaine de chaque objectif actif (carte → page de l'objectif), puis « En pause et terminés » ; weekTotals()
-  planning.js         charge par semaine + tous les plans mélangés : liste par semaine ou frise (grille objectifs × semaines)
+  home.js             onglet Semaine (page d'accueil unique) : la semaine de chaque objectif actif (carte → page de l'objectif), puis « À venir », puis « En pause et terminés » ; weekTotals()
+  planning.js         section « À venir » de l'accueil : tous les objectifs mélangés, liste des 4 prochaines semaines (« Voir toutes les semaines ») ou frise (charge par semaine + grille objectifs × semaines)
   goal.js             page d'un objectif : KPI, semaine, plan (bouton Off), courbe, historique, bilan
   goal-form.js        création / modification / duplication (/goal/:id/duplicate), aperçu du plan en direct
   quick-log.js        gestes de saisie partagés : rond prévu touché = séance faite comme prévu (toast « Annuler »), rond vert = corriger, [data-log] = autre quantité
@@ -51,7 +51,7 @@ tests/plan.test.mjs   tests du moteur
 ## Conventions
 
 - Les vues exportent `mount(container, …)` et écrivent `innerHTML` ; échapper tout texte utilisateur avec `esc()`.
-- Écouteurs sur des éléments recréés à chaque rendu, jamais sur `#app` (sinon ils s'accumulent). Navigation : attribut `data-nav`, géré par un seul écouteur dans app.js. Trois onglets : Semaine (`/`), Planning, Réglages ; la page d'un objectif garde le menu du bas. Saisie : `bindQuickLog(root, rerender)` (quick-log.js) gère `data-quick` (rond prévu), `data-edit-session` + `data-goal` (rond fait, ligne d'historique) et `data-log` (autre quantité).
+- Écouteurs sur des éléments recréés à chaque rendu, jamais sur `#app` (sinon ils s'accumulent). Navigation : attribut `data-nav`, géré par un seul écouteur dans app.js. Deux onglets : Semaine (`/`, qui contient aussi le planning) et Réglages ; la page d'un objectif garde le menu du bas. Saisie : `bindQuickLog(root, rerender)` (quick-log.js) gère `data-quick` (rond prévu), `data-edit-session` + `data-goal` (rond fait, ligne d'historique) et `data-log` (autre quantité).
 - Après une modification, appeler `refreshSidebar()`.
 - Synchro `state.json` regroupée (600 ms), vidée immédiatement quand l'app passe en arrière-plan ; SHA relu avant chaque PUT. Tous les commits de données portent `[skip ci]`.
 - sessionStorage : `ontrack_auth`, `ontrack_pat` (distinctes des apps sœurs, même origine `auremoo.github.io`). localStorage : `ontrack_planning_mode` (préférence d'affichage seulement).
