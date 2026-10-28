@@ -1,5 +1,4 @@
-// Accueil (onglet Semaine) : la semaine en cours de chaque objectif actif, avec saisie rapide,
-// puis « À venir » (tous les objectifs mélangés, liste ou frise), puis les objectifs en pause et terminés.
+// Accueil : la semaine en cours de tous les objectifs actifs, avec saisie rapide d'une séance.
 
 import { getGoals, isActive, summaryOf } from '../store.js';
 import { today, mondayOf, addDays, formatRange } from '../utils/dates.js';
@@ -7,7 +6,6 @@ import { esc, ICONS, progressBar } from '../utils/ui.js';
 import { topbar, globalTabBar } from './chrome.js';
 import { weekCard, kindIcon, statusPill } from './goal-ui.js';
 import { bindQuickLog } from './quick-log.js';
-import { upcomingSection, setPlanningMode } from './planning.js';
 
 // Ordre d'affichage : ce qui reste à faire cette semaine d'abord, le reste ensuite.
 const ORDER = { overdue: 0, late: 1, ontrack: 2, ahead: 3, before: 5, done: 6 };
@@ -16,22 +14,8 @@ const rank = s => (ORDER[s.status] ?? 4) + (s.current?.complete || s.current?.of
 export function mount(container) {
   container.innerHTML = `<div class="view"></div>`;
   const root = container.firstElementChild;
-  let showAll = false;
-  const rerender = () => { render(root, { showAll }); centerGrid(root); };
-  root.addEventListener('click', e => {
-    const mode = e.target.closest('[data-mode]');
-    if (mode) { setPlanningMode(mode.dataset.mode); rerender(); return; }
-    if (e.target.closest('[data-more]')) { showAll = !showAll; rerender(); }
-  });
-  bindQuickLog(root, rerender);
-  rerender();
-}
-
-// Frise : centrer horizontalement la semaine en cours (sans faire défiler la page)
-function centerGrid(root) {
-  const col = root.querySelector('.pgrid__col--current');
-  const wrap = col?.closest('.pgrid-wrap');
-  if (wrap) wrap.scrollLeft = col.offsetLeft - wrap.clientWidth / 2 + col.offsetWidth / 2;
+  bindQuickLog(root, () => render(root));
+  render(root);
 }
 
 export function weekTotals(summaries) {
@@ -46,7 +30,7 @@ export function weekTotals(summaries) {
   return { sessionsLeft, weeksDone, withTarget };
 }
 
-function render(root, { showAll = false } = {}) {
+function render(root) {
   const cur = mondayOf(today());
   const summaries = getGoals().filter(isActive).map(g => summaryOf(g.id))
     .filter(s => s.status !== 'done' || s.finishedAt?.slice(0, 10) >= cur)
@@ -65,7 +49,6 @@ function render(root, { showAll = false } = {}) {
           <div class="week-summary__item ${late ? 'week-summary__item--bad' : ''}"><strong>${late}</strong><span>en retard</span></div>
         </div>
         <div class="home-grid">${summaries.map(s => weekCard(s)).join('')}</div>` : emptyState()}
-      ${upcomingSection(getGoals().filter(isActive).map(g => summaryOf(g.id)), cur, { showAll })}
       ${othersSection(summaries)}
     </main>
     ${globalTabBar('home')}`;

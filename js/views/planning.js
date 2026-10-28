@@ -1,53 +1,75 @@
-// Section « À venir » de l'accueil : tous les objectifs actifs mélangés, semaine par semaine.
-// Deux affichages : liste des prochaines semaines, ou frise (charge par semaine + grille objectifs × semaines).
+// Planning : tous les objectifs actifs mélangés, semaine par semaine (liste) ou en frise (grille).
 
+import { getGoals, isActive, summaryOf } from '../store.js';
 import { fmt, unitOf } from '../utils/plan.js';
-import { addDays, formatRange, formatDateShort } from '../utils/dates.js';
-import { esc, progressBar } from '../utils/ui.js';
+import { today, mondayOf, addDays, formatRange, formatDateShort } from '../utils/dates.js';
+import { esc, progressBar, ICONS } from '../utils/ui.js';
+import { topbar, globalTabBar } from './chrome.js';
 import { kindIcon, slotsHtml, weekNotes } from './goal-ui.js';
+import { bindQuickLog } from './quick-log.js';
 import { loadChart } from './chart.js';
 
 const MODE_KEY = 'ontrack_planning_mode';
-const SHOWN_WEEKS = 4;   // semaines affichées dans la liste avant « Voir toutes les semaines »
+let showPast = false;
 
-export function getPlanningMode() {
-  try { return localStorage.getItem(MODE_KEY) === 'grid' ? 'grid' : 'weeks'; } catch { return 'weeks'; }
+function getMode() {
+  try { return localStorage.getItem(MODE_KEY) || 'weeks'; } catch { return 'weeks'; }
 }
-export function setPlanningMode(m) {
+function setMode(m) {
   try { localStorage.setItem(MODE_KEY, m); } catch { /* navigation privée */ }
 }
 
-// summaries : objectifs actifs ; showAll : liste complète des semaines à venir
-export function upcomingSection(summaries, cur, { showAll = false } = {}) {
-  const planned = summaries.filter(s => s.weeks.length);
-  if (!planned.length) return '';
-  const mode = getPlanningMode();
-  const all = [...new Set(planned.flatMap(s => s.weeks.map(w => w.monday)))].sort();
-  const next = all.filter(m => m > cur);
-  if (!next.length && mode === 'weeks') return '';
-  const shown = showAll ? next : next.slice(0, SHOWN_WEEKS);
+export function mount(container) {
+  container.innerHTML = `<div class="view"></div>`;
+  const root = container.firstElementChild;
+  root.addEventListener('click', e => {
+    const mode = e.target.closest('[data-mode]');
+    if (mode) { setMode(mode.dataset.mode); render(root); return; }
+    if (e.target.closest('[data-past]')) { showPast = !showPast; render(root); }
+  });
+  bindQuickLog(root, () => render(root));
+  render(root);
+}
 
-  return `
-    <section class="upcoming">
-      <div class="upcoming__head">
-        <h2 class="section-header upcoming__title">À venir</h2>
-        <div class="seg seg--inline">
-          <button class="seg__btn ${mode === 'weeks' ? 'seg__btn--on' : ''}" data-mode="weeks">Liste</button>
-          <button class="seg__btn ${mode === 'grid' ? 'seg__btn--on' : ''}" data-mode="grid">Frise</button>
+function render(root) {
+  const cur = mondayOf(today());
+  const summaries = getGoals().filter(isActive).map(g => summaryOf(g.id)).filter(s => s.weeks.length);
+  const mode = getMode();
+
+  // Toutes les semaines couvertes par au moins un plan
+  const all = [...new Set(summaries.flatMap(s => s.weeks.map(w => w.monday)))].sort();
+  const mondays = mode === 'weeks' && !showPast ? all.filter(m => m >= cur) : all;
+
+  root.innerHTML = `
+    ${topbar({ title: 'Planning', subtitle: 'Tous les objectifs, semaine par semaine' })}
+    <main class="page">
+      ${summaries.length ? `
+        <div class="planning-toolbar">
+          <div class="seg seg--inline">
+            <button class="seg__btn ${mode === 'weeks' ? 'seg__btn--on' : ''}" data-mode="weeks">Semaines</button>
+            <button class="seg__btn ${mode === 'grid' ? 'seg__btn--on' : ''}" data-mode="grid">Frise</button>
+          </div>
+          ${mode === 'weeks' && all.some(m => m < cur) ? `<button class="link-btn" data-past>${showPast ? 'Masquer' : 'Afficher'} les semaines passées</button>` : ''}
         </div>
-      </div>
-      ${mode === 'grid' ? `
         <section class="card">
           <div class="card__heading-row">
             <h2 class="card__heading">Charge par semaine</h2>
             <span class="muted small">en séances, tous objectifs</span>
           </div>
-          ${loadChart(planned, all, cur)}
+          ${loadChart(summaries, all, cur)}
         </section>
-        ${grid(planned, all, cur)}` : `
-        ${weekList(planned, shown, cur)}
-        ${next.length > SHOWN_WEEKS ? `<button class="link-btn upcoming__more" data-more>${showAll ? 'Voir moins' : `Voir toutes les semaines (${next.length})`}</button>` : ''}`}
-    </section>`;
+        ${mode === 'grid' ? grid(summaries, all, cur) : weekList(summaries, mondays, cur)}` : `
+        <div class="empty-state">
+          <div class="empty-state__icon empty-state__icon--svg">${ICONS.calendar}</div>
+          <div class="empty-state__title">Rien de planifié</div>
+          <div class="empty-state__body">Le planning réunit les plans de tous tes objectifs actifs.</div>
+          <button class="btn btn--primary" data-nav="/new-goal">Créer un objectif</button>
+        </div>`}
+    </main>
+    ${globalTabBar('planning')}`;
+
+  // Frise : amener la semaine en cours en vue
+  root.querySelector('.pgrid__col--current')?.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 
 // ── Liste : une carte par semaine, chaque objectif avec sa cible et ses séances ──
@@ -55,16 +77,18 @@ export function upcomingSection(summaries, cur, { showAll = false } = {}) {
 function weekList(summaries, mondays, cur) {
   return `<div class="planning-weeks">${mondays.map(m => {
     const rows = summaries.map(s => ({ s, w: s.weeks.find(w => w.monday === m) })).filter(x => x.w);
-    const sessions = rows.reduce((a, { w }) => a + (w.off ? 0 : w.planned.length), 0);
-    const label = m === addDays(cur, 7) ? 'Semaine prochaine' : '';
+    const sessions = rows.reduce((a, { s, w }) => a + (w.off ? 0 : w.status === 'future' || w.status === 'current' ? w.planned.length : 0), 0);
+    const doneSessions = rows.reduce((a, { w }) => a + w.sessions.length, 0);
+    const label = m === cur ? 'Cette semaine' : m === addDays(cur, 7) ? 'Semaine prochaine' : '';
     return `
-      <section class="card pweek">
+      <section class="card pweek ${m === cur ? 'pweek--current' : ''} ${m < cur ? 'pweek--past' : ''}">
         <header class="pweek__head">
           <div>
             <div class="pweek__title">${label || formatRange(m, addDays(m, 6))}</div>
             ${label ? `<div class="muted small">${formatRange(m, addDays(m, 6))}</div>` : ''}
           </div>
-          <span class="muted small">${sessions} séance${sessions > 1 ? 's' : ''}</span>
+          <span class="muted small">${m < cur ? `${doneSessions} séance${doneSessions > 1 ? 's' : ''} faite${doneSessions > 1 ? 's' : ''}`
+            : `${sessions} séance${sessions > 1 ? 's' : ''}${m === cur && doneSessions ? ` à faire · ${doneSessions} faite${doneSessions > 1 ? 's' : ''}` : ''}`}</span>
         </header>
         <div class="pweek__rows">${rows.map(({ s, w }) => pweekRow(s, w)).join('')}</div>
       </section>`;
@@ -73,8 +97,10 @@ function weekList(summaries, mondays, cur) {
 
 function pweekRow(s, w) {
   const g = s.goal;
-  const amount = w.off ? '<span class="muted">Off</span>'
-    : w.target ? esc(fmt(w.target, g)) : '<span class="muted">Rien de prévu</span>';
+  let amount;
+  if (w.off) amount = '<span class="muted">Off</span>';
+  else if (w.status === 'future') amount = w.target ? esc(fmt(w.target, g)) : '<span class="muted">Rien de prévu</span>';
+  else amount = `${w.done} / ${esc(fmt(w.target, g))}${w.complete ? ' ✓' : ''}`;
   return `
     <div class="prow prow--${w.status}">
       <button class="prow__name link-like" data-nav="/goal/${g.id}">${kindIcon(g, 'sm')}<span>${esc(g.name)}</span></button>
@@ -83,7 +109,7 @@ function pweekRow(s, w) {
     </div>`;
 }
 
-// ── Frise : objectifs en lignes, semaines en colonnes (passées comprises) ──
+// ── Frise : objectifs en lignes, semaines en colonnes ──
 
 function grid(summaries, mondays, cur) {
   const totals = mondays.map(m => summaries.reduce((a, s) => {

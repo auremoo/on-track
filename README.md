@@ -42,7 +42,8 @@ Livre de 300 pages, 6 semaines, 3 séances par semaine :
 
 | Écran | Contenu |
 |---|---|
-| Semaine | Page d'accueil. **Cette semaine** : chaque objectif actif, reste à faire, ronds des séances (à toucher quand c'est fait), prochaine séance, « Autre quantité » ; toucher le nom ouvre l'objectif. **À venir** : tous les objectifs mélangés, en **Liste** (les 4 prochaines semaines, puis « Voir toutes les semaines ») ou en **Frise** (charge par semaine en séances, puis objectifs en lignes et semaines en colonnes). En bas : objectifs en pause et terminés |
+| Semaine | La semaine en cours de chaque objectif actif : reste à faire, ronds des séances (à toucher quand c'est fait), prochaine séance, « Autre quantité ». Toucher le nom ouvre l'objectif. En bas : objectifs en pause et terminés |
+| Planning | Graphique de charge par semaine (séances faites, manquées, à faire), puis tous les objectifs mélangés : **Semaines** (une carte par semaine avec chaque objectif) ou **Frise** (objectifs en lignes, semaines en colonnes, total de séances par semaine) |
 | Objectif | Avancement, indicateurs, semaine en cours, plan semaine par semaine (avec « Off »), courbe prévu / réel / plan recalculé, historique des séances (modifiables), notes des séances visibles dans le plan, bilan une fois terminé. Bouton **Dupliquer** (saison suivante, tome 2…) : réglages repris, sans les séances |
 | Réglages | Export JSON, documentation, déconnexion |
 

@@ -1,6 +1,7 @@
 // On Track — Auteur : Aurélien Moote - Moo - 2026 — Licence MIT
 import { isAuthenticated, mount as mountLock, PAT_KEY } from './views/lock.js';
 import { mount as mountHome }     from './views/home.js';
+import { mount as mountPlanning } from './views/planning.js';
 import { mount as mountGoal }     from './views/goal.js';
 import { mount as mountGoalForm } from './views/goal-form.js';
 import { mount as mountSettings } from './views/settings.js';
@@ -21,6 +22,7 @@ export function navigate(path) {
 
 const ROUTES = [
   { re: /^\/$/,                   fn: () => mountHome(app) },
+  { re: /^\/planning$/,           fn: () => mountPlanning(app) },
   { re: /^\/new-goal$/,           fn: () => mountGoalForm(app, null) },
   { re: /^\/settings$/,           fn: () => mountSettings(app) },
   { re: /^\/goal\/([\w-]+)$/,      fn: m => mountGoal(app, m[1]) },
