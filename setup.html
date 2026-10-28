@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>On Track — Configuration</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+      background: #F2F2F7;
+      color: #1C1C1E;
+      min-height: 100dvh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 16px 60px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    }
+    h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .subtitle { font-size: 14px; color: #6C6C70; margin-bottom: 28px; line-height: 1.5; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: #6C6C70; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.03em; }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #E5E5EA;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+      background: #F9F9FB;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: #007AFF; background: #fff; }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.15s;
+    }
+    .btn:active { opacity: 0.75; }
+    .btn--primary { background: #007AFF; color: #fff; }
+    .btn--secondary { background: #E5E5EA; color: #1C1C1E; }
+    .result { margin-top: 28px; }
+    .result h2 { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+    .result p { font-size: 13px; color: #6C6C70; margin-bottom: 10px; line-height: 1.5; }
+    textarea {
+      width: 100%;
+      height: 140px;
+      padding: 12px;
+      border: 1.5px solid #E5E5EA;
+      border-radius: 10px;
+      font-family: "SF Mono", "Fira Mono", monospace;
+      font-size: 12px;
+      background: #F9F9FB;
+      resize: none;
+      outline: none;
+      color: #1C1C1E;
+    }
+    .success { color: #34C759; font-size: 14px; font-weight: 600; margin-top: 8px; display: none; }
+    .divider { height: 1px; background: #E5E5EA; margin: 24px 0; }
+    .info-box {
+      background: #F2F9FF;
+      border: 1.5px solid #B3D9FF;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 13px;
+      color: #004080;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .info-box strong { font-weight: 600; }
+    code { font-family: "SF Mono", monospace; background: #E8F0FF; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Configuration On Track</h1>
+    <p class="subtitle">Génère le fichier <code>config.json</code> avec ton token GitHub chiffré. À faire une seule fois.</p>
+
+    <div class="info-box">
+      <strong>Comment ça marche :</strong><br>
+      Ton token est chiffré avec ton mot de passe (AES-GCM). Seul le résultat chiffré est stocké dans le repo — sans le mot de passe il est inutilisable.
+    </div>
+
+    <form id="setup-form">
+      <div class="form-group">
+        <label>Token GitHub (PAT)</label>
+        <input type="password" id="pat" placeholder="github_pat_…" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="form-group">
+        <label>Mot de passe de l'app</label>
+        <input type="password" id="pwd" value="171225" autocomplete="off" />
+      </div>
+      <div class="divider"></div>
+      <div class="form-group">
+        <label>Owner GitHub</label>
+        <input type="text" id="owner" value="auremoo" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="form-group">
+        <label>Nom du repo</label>
+        <input type="text" id="repo" value="on-track" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="form-group">
+        <label>Branche</label>
+        <input type="text" id="branch" value="main" autocomplete="off" />
+      </div>
+      <button type="submit" class="btn btn--primary" id="submit-btn">Chiffrer et générer config.json</button>
+    </form>
+
+    <div class="result" id="result" style="display:none">
+      <h2>Contenu de <code>config.json</code></h2>
+      <p>Copie ce contenu dans le fichier <code>config.json</code> à la racine du repo, puis pousse sur GitHub.</p>
+      <textarea id="output" readonly></textarea>
+      <button class="btn btn--secondary" id="copy-btn" style="margin-top:12px">Copier dans le presse-papiers</button>
+      <div class="success" id="copied-msg">✓ Copié !</div>
+    </div>
+  </div>
+
+  <script>
+    // Crypto — same implementation as js/utils/crypto.js
+    // Sel identique à Pacing App : un token chiffré pour l'une est réutilisable tel quel pour l'autre.
+    const SALT = new TextEncoder().encode('pacing-app-v1');
+    const ITERATIONS = 100_000;
+
+    async function deriveKey(password) {
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']
+      );
+      return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: SALT, iterations: ITERATIONS, hash: 'SHA-256' },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
+    }
+
+    async function encryptToken(token, password) {
+      const key = await deriveKey(password);
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const ciphertext = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        new TextEncoder().encode(token)
+      );
+      const combined = new Uint8Array(12 + ciphertext.byteLength);
+      combined.set(iv);
+      combined.set(new Uint8Array(ciphertext), 12);
+      return btoa(String.fromCharCode(...combined));
+    }
+
+    document.getElementById('setup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pat    = document.getElementById('pat').value.trim();
+      const pwd    = document.getElementById('pwd').value.trim();
+      const owner  = document.getElementById('owner').value.trim();
+      const repo   = document.getElementById('repo').value.trim();
+      const branch = document.getElementById('branch').value.trim() || 'main';
+
+      if (!pat || !pwd || !owner || !repo) {
+        alert('Remplis tous les champs.');
+        return;
+      }
+
+      const btn = document.getElementById('submit-btn');
+      btn.textContent = 'Chiffrement…';
+      btn.disabled = true;
+
+      try {
+        const encryptedToken = await encryptToken(pat, pwd);
+        const config = { owner, repo, branch, encryptedToken };
+        document.getElementById('output').value = JSON.stringify(config, null, 2);
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+      } catch (err) {
+        alert('Erreur : ' + err.message);
+      } finally {
+        btn.textContent = 'Chiffrer et générer config.json';
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('copy-btn').addEventListener('click', async () => {
+      const text = document.getElementById('output').value;
+      await navigator.clipboard.writeText(text);
+      const msg = document.getElementById('copied-msg');
+      msg.style.display = 'block';
+      setTimeout(() => { msg.style.display = 'none'; }, 2000);
+    });
+  </script>
+</body>
+</html>

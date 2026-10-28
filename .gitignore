@@ -1,0 +1,28 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local env
+.env
+*.local
+
+# Claude Code local settings (can contain paths/permissions)
+.claude/
+
+# Never commit tokens or secrets
+*secret*
+*credentials*
+*.token
+*.tokens
+*_token.json
+*_secret.json
+
+# Node (if ever needed for tooling)
+node_modules/
+npm-debug.log*

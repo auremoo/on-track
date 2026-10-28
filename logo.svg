@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1254 1254">
+  <!-- On Track — logo : anneau d'avancement + coche, barre de rythme (séances groupées par semaine) -->
+  <rect width="1254" height="1254" fill="#FFFFFF"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M396.3 477.9 A231 231 0 0 1 635.1 259.1" stroke="#D3E5FB" stroke-width="64"/>
+    <path d="M635.1 259.1 A231 231 0 1 1 396.3 477.9" stroke="#007AFF" stroke-width="64"/>
+    <path d="M556 492 L604 540 L706 441" stroke="#007AFF" stroke-width="62"/>
+    <g stroke-width="32">
+      <line x1="216" y1="931" x2="216" y2="978" stroke="#34C759"/>
+      <line x1="263" y1="916" x2="263" y2="978" stroke="#34C759"/>
+      <line x1="311" y1="931" x2="311" y2="978" stroke="#34C759"/>
+      <line x1="400" y1="931" x2="400" y2="978" stroke="#34C759"/>
+      <line x1="449" y1="916" x2="449" y2="978" stroke="#34C759"/>
+      <line x1="494" y1="931" x2="494" y2="978" stroke="#34C759"/>
+      <line x1="581" y1="931" x2="581" y2="978" stroke="#007AFF"/>
+      <line x1="628" y1="892" x2="628" y2="978" stroke="#007AFF"/>
+      <line x1="676" y1="931" x2="676" y2="978" stroke="#007AFF"/>
+      <line x1="762" y1="944" x2="762" y2="978" stroke="#3391FF"/>
+      <line x1="808" y1="928" x2="808" y2="978" stroke="#3391FF"/>
+      <line x1="853" y1="944" x2="853" y2="978" stroke="#3391FF"/>
+      <line x1="944" y1="942" x2="944" y2="978" stroke="#3391FF"/>
+      <line x1="991" y1="924" x2="991" y2="978" stroke="#3391FF"/>
+      <line x1="1038" y1="942" x2="1038" y2="978" stroke="#3391FF"/>
+    </g>
+  </g>
+</svg>

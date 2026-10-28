@@ -1,0 +1,83 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  touch-action: manipulation;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg-grouped);
+  color: var(--text-primary);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  background: none;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#sidebar { display: none; }
+
+/* ── Desktop layout ────────────────────────────────────────────── */
+@media (min-width: 900px) {
+  body:not(.is-locked) #shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    min-height: 100dvh;
+  }
+
+  body:not(.is-locked) #sidebar {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-primary);
+    border-right: 1px solid var(--separator);
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+
+  body:not(.is-locked) #app {
+    height: 100dvh;
+    overflow-y: auto;
+  }
+
+  body:not(.is-locked) #toast-container {
+    left: calc(var(--sidebar-width) + (100vw - var(--sidebar-width)) / 2);
+  }
+}
