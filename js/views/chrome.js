@@ -6,7 +6,6 @@ import { ICONS, esc } from '../utils/ui.js';
 const TABS = [
   { id: 'home',     label: 'Semaine',   path: '/',         icon: 'home' },
   { id: 'planning', label: 'Planning',  path: '/planning', icon: 'planning' },
-  { id: 'goals',    label: 'Objectifs', path: '/goals',    icon: 'goals' },
   { id: 'settings', label: 'Réglages',  path: '/settings', icon: 'settings' },
 ];
 

@@ -6,7 +6,7 @@ import { today, mondayOf, addDays, formatRange, formatDateShort } from '../utils
 import { esc, progressBar, ICONS } from '../utils/ui.js';
 import { topbar, globalTabBar } from './chrome.js';
 import { kindIcon, slotsHtml, weekNotes } from './goal-ui.js';
-import { openLogSheet } from './log-sheet.js';
+import { bindQuickLog } from './quick-log.js';
 import { loadChart } from './chart.js';
 
 const MODE_KEY = 'ontrack_planning_mode';
@@ -25,10 +25,9 @@ export function mount(container) {
   root.addEventListener('click', e => {
     const mode = e.target.closest('[data-mode]');
     if (mode) { setMode(mode.dataset.mode); render(root); return; }
-    if (e.target.closest('[data-past]')) { showPast = !showPast; render(root); return; }
-    const log = e.target.closest('[data-log]');
-    if (log) openLogSheet(log.dataset.log, { onDone: () => render(root) });
+    if (e.target.closest('[data-past]')) { showPast = !showPast; render(root); }
   });
+  bindQuickLog(root, () => render(root));
   render(root);
 }
 
@@ -107,7 +106,6 @@ function pweekRow(s, w) {
       <button class="prow__name link-like" data-nav="/goal/${g.id}">${kindIcon(g, 'sm')}<span>${esc(g.name)}</span></button>
       <div class="prow__amount">${amount}</div>
       ${!w.off ? `<div class="prow__slots">${slotsHtml(s, w, { small: true })}${weekNotes(w)}</div>` : ''}
-      ${w.status === 'current' && !w.complete && s.status !== 'done' ? `<button class="chip chip--sm prow__log" data-log="${g.id}">+ Séance</button>` : ''}
     </div>`;
 }
 

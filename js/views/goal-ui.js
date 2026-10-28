@@ -28,16 +28,25 @@ export function statusPill(s) {
 
 // Pastilles d'une semaine : séances faites (vertes), prévues (vides), rattrapage (orange),
 // séances prévues devenues inutiles car la cible est atteinte (grisées).
+// Semaine en cours : toucher un rond prévu = séance faite comme prévu ; toucher un rond vert
+// = corriger la séance (voir quick-log.js).
 export function slotsHtml(s, w, { small = false } = {}) {
   if (!w) return '';
-  const S = s.goal.sessionsPerWeek || 0;
-  const done = w.sessions.map(x => `<span class="slot slot--done ${x.note ? 'slot--noted' : ''}" title="${esc(fmt(x.amount, s.goal) + (x.note ? ` · ${x.note}` : ''))}">${x.amount}</span>`);
-  const planned = w.planned.map(n => `<span class="slot ${w.catchUp ? 'slot--catchup' : 'slot--todo'}" title="${w.catchUp ? 'Rattrapage' : 'À faire'}">${n}</span>`);
+  const g = s.goal;
+  const S = g.sessionsPerWeek || 0;
+  const tappable = w.status === 'current' && s.status !== 'done';
+  const done = w.sessions.map(x => `
+    <button type="button" class="slot slot--done ${x.note ? 'slot--noted' : ''}" data-edit-session="${x.id}" data-goal="${g.id}"
+            title="${esc(`${fmt(x.amount, g)}${x.note ? ` · ${x.note}` : ''} — toucher pour corriger`)}">${x.amount}</button>`);
+  const planned = w.planned.map(n => tappable ? `
+    <button type="button" class="slot slot--tap ${w.catchUp ? 'slot--catchup' : 'slot--todo'}" data-quick="${g.id}" data-amount="${n}"
+            title="${esc(`${w.catchUp ? 'Rattrapage' : 'Séance'} de ${fmt(n, g)} — toucher quand c'est fait`)}">${n}</button>`
+    : `<span class="slot ${w.catchUp ? 'slot--catchup' : 'slot--todo'}">${n}</span>`);
   const spare = (w.complete || (w.status !== 'future' && !w.planned.length)) && S > w.sessions.length && w.status === 'current'
     ? Array.from({ length: S - w.sessions.length }, () => '<span class="slot slot--spare" title="Facultative : cible atteinte">–</span>')
     : [];
   const html = [...done, ...planned, ...spare].join('');
-  return html ? `<div class="slots ${small ? 'slots--sm' : ''}">${html}</div>` : '';
+  return html ? `<div class="slots ${small ? 'slots--sm' : ''} ${tappable ? 'slots--current' : ''}">${html}</div>` : '';
 }
 
 // Phrase principale de la semaine en cours
@@ -76,8 +85,8 @@ export function weekCard(s, { withTitle = true } = {}) {
     <section class="card week-card week-card--${s.status}">
       ${withTitle ? `
         <header class="week-card__head">
-          <button class="week-card__title link-like" data-nav="/goal/${g.id}">
-            ${kindIcon(g)}<span>${esc(g.name)}</span>
+          <button class="week-card__title link-like" data-nav="/goal/${g.id}" title="Voir le plan de cet objectif">
+            ${kindIcon(g)}<span>${esc(g.name)}</span><span class="week-card__chevron">${ICONS.chevronR}</span>
           </button>
           ${statusPill(s)}
         </header>` : `
@@ -92,11 +101,12 @@ export function weekCard(s, { withTitle = true } = {}) {
           <span class="small muted">${w.done} / ${w.target}</span>
         </div>` : ''}
       ${slotsHtml(s, w)}
+      ${w?.planned.length && !w.sessions.length && s.status !== 'done' ? '<div class="week-card__help">Touche un rond quand la séance est faite.</div>' : ''}
       ${w ? weekNotes(w) : ''}
       ${nextLine(s) ? `<div class="week-card__next">${nextLine(s)}</div>` : ''}
       <footer class="week-card__foot">
         <span class="small muted">${esc(positionLabel(g, s.position))} · ${s.pct} %</span>
-        ${canLog ? `<button class="btn btn--primary btn--sm" data-log="${g.id}">${ICONS.add}Séance</button>` : ''}
+        ${canLog ? `<button class="btn btn--ghost btn--sm" data-log="${g.id}" title="Séance pas finie ou dépassée : saisir ce que tu as vraiment fait">${w?.planned.length ? 'Autre quantité' : `${ICONS.add}Séance`}</button>` : ''}
       </footer>
     </section>`;
 }

@@ -13,7 +13,7 @@ Fonctionne sans serveur : toutes les données sont stockées dans ce dépôt Git
 
 1. **Créer un objectif** : type (livre, série, cours, révisions, livre audio, écriture, autre), total (pages, épisodes, modules, minutes, mots…), point de départ éventuel, échéance et, si tu veux, un nombre de séances par semaine.
 2. **L'app calcule le plan** : la cible de chaque semaine et, avec un nombre de séances, la cible de chaque séance. Pas de jours précis : seulement des séances à caser dans la semaine.
-3. **Après chaque séance**, tu notes ce que tu as fait : la quantité (« 23 pages ») ou la position atteinte (« page 142 », « épisode 13 »). L'app recalcule ce qu'il reste sur la semaine et le répartit sur les séances restantes.
+3. **Après chaque séance**, tu touches son rond : la séance est notée comme faite, telle que prévue (« Annuler » pendant quelques secondes si c'est une erreur). Séance pas finie ou dépassée : « Autre quantité », qui demande ce que tu as vraiment fait — pour un livre, la page où tu t'es arrêté. Toucher un rond vert permet de corriger une séance. L'app recalcule ce qu'il reste sur la semaine et le répartit sur les séances restantes.
 4. **Si les séances prévues sont faites sans atteindre la cible**, une **séance de rattrapage** est proposée tant que la semaine n'est pas finie.
 5. **Le lundi suivant**, le retard (ou l'avance) est **lissé** sur toutes les semaines restantes jusqu'à l'échéance : chaque semaine vaut « ce qui reste ÷ semaines restantes ».
 
@@ -42,9 +42,8 @@ Livre de 300 pages, 6 semaines, 3 séances par semaine :
 
 | Écran | Contenu |
 |---|---|
-| Cette semaine | La semaine en cours de chaque objectif actif : reste à faire, séances (faites / prévues / rattrapage), prochaine séance, bouton « + Séance » |
+| Semaine | La semaine en cours de chaque objectif actif : reste à faire, ronds des séances (à toucher quand c'est fait), prochaine séance, « Autre quantité ». Toucher le nom ouvre l'objectif. En bas : objectifs en pause et terminés |
 | Planning | Graphique de charge par semaine (séances faites, manquées, à faire), puis tous les objectifs mélangés : **Semaines** (une carte par semaine avec chaque objectif) ou **Frise** (objectifs en lignes, semaines en colonnes, total de séances par semaine) |
-| Objectifs | En cours, en pause, terminés / archivés |
 | Objectif | Avancement, indicateurs, semaine en cours, plan semaine par semaine (avec « Off »), courbe prévu / réel / plan recalculé, historique des séances (modifiables), notes des séances visibles dans le plan, bilan une fois terminé. Bouton **Dupliquer** (saison suivante, tome 2…) : réglages repris, sans les séances |
 | Réglages | Export JSON, documentation, déconnexion |
 

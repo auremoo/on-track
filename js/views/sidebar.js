@@ -27,7 +27,6 @@ export function mountSidebar(container, path = '/') {
     <nav class="sb-nav">
       ${navItem('Cette semaine', '/', 'home')}
       ${navItem('Planning', '/planning', 'planning')}
-      ${navItem('Objectifs', '/goals', 'goals')}
       ${navItem('Réglages', '/settings', 'settings')}
     </nav>
 

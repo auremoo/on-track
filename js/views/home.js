@@ -2,10 +2,10 @@
 
 import { getGoals, isActive, summaryOf } from '../store.js';
 import { today, mondayOf, addDays, formatRange } from '../utils/dates.js';
-import { esc, ICONS } from '../utils/ui.js';
+import { esc, ICONS, progressBar } from '../utils/ui.js';
 import { topbar, globalTabBar } from './chrome.js';
-import { weekCard } from './goal-ui.js';
-import { openLogSheet } from './log-sheet.js';
+import { weekCard, kindIcon, statusPill } from './goal-ui.js';
+import { bindQuickLog } from './quick-log.js';
 
 // Ordre d'affichage : ce qui reste à faire cette semaine d'abord, le reste ensuite.
 const ORDER = { overdue: 0, late: 1, ontrack: 2, ahead: 3, before: 5, done: 6 };
@@ -14,10 +14,7 @@ const rank = s => (ORDER[s.status] ?? 4) + (s.current?.complete || s.current?.of
 export function mount(container) {
   container.innerHTML = `<div class="view"></div>`;
   const root = container.firstElementChild;
-  root.addEventListener('click', e => {
-    const b = e.target.closest('[data-log]');
-    if (b) openLogSheet(b.dataset.log, { onDone: () => render(root) });
-  });
+  bindQuickLog(root, () => render(root));
   render(root);
 }
 
@@ -52,6 +49,7 @@ function render(root) {
           <div class="week-summary__item ${late ? 'week-summary__item--bad' : ''}"><strong>${late}</strong><span>en retard</span></div>
         </div>
         <div class="home-grid">${summaries.map(s => weekCard(s)).join('')}</div>` : emptyState()}
+      ${othersSection(summaries)}
     </main>
     ${globalTabBar('home')}`;
 }
@@ -65,4 +63,26 @@ function emptyState() {
       <div class="empty-state__body">Un livre à finir, une série, un cours… Donne un total et une échéance : l'app te dit quoi faire chaque semaine.</div>
       <button class="btn btn--primary" data-nav="/new-goal">${esc('Créer un objectif')}</button>
     </div>`;
+}
+
+// Objectifs hors de la semaine en cours : en pause, archivés, terminés
+function othersSection(shown) {
+  const ids = new Set(shown.map(s => s.goal.id));
+  const others = getGoals().filter(g => !ids.has(g.id)).map(g => summaryOf(g.id));
+  if (!others.length) return '';
+  const label = s => s.goal.status === 'paused' ? '<span class="pill pill--muted">En pause</span>'
+    : s.goal.status === 'archived' ? '<span class="pill pill--muted">Archivé</span>' : statusPill(s);
+  return `
+    <details class="others">
+      <summary class="section-header others__summary">En pause et terminés (${others.length})</summary>
+      <div class="card others__list">
+        ${others.map(s => `
+          <button class="others__row" data-nav="/goal/${s.goal.id}">
+            ${kindIcon(s.goal, 'sm')}
+            <span class="others__name">${esc(s.goal.name)}</span>
+            <span class="others__pct small muted">${s.pct} %</span>
+            ${label(s)}
+          </button>`).join('')}
+      </div>
+    </details>`;
 }

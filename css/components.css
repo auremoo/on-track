@@ -969,3 +969,44 @@ select.input-field { -webkit-appearance: none; appearance: none; background-imag
 .empty-state__icon--svg { width: 64px; height: 64px; border-radius: 50%; background: var(--ios-blue-tint); color: var(--ios-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto; }
 .empty-state__icon--svg svg { width: 32px; height: 32px; }
 .empty-state__icon--bad { background: rgba(255, 59, 48, 0.12); color: var(--ios-red); }
+
+/* ─── Saisie rapide : ronds à toucher ─────────────────────────── */
+
+button.slot { cursor: pointer; font-family: inherit; transition: transform var(--duration-fast) var(--ease-ios), background var(--duration-fast); }
+button.slot:active { transform: scale(0.92); }
+.slots--current:not(.slots--sm) .slot { min-width: 44px; height: 44px; font-size: 15px; }
+.slots--current:not(.slots--sm) { gap: 10px; }
+.slots--sm.slots--current .slot { min-width: 32px; height: 28px; font-size: 12px; }
+.slot--tap.slot--todo { background: var(--ios-blue-tint); }
+.slot--tap.slot--catchup { background: rgba(255, 149, 0, 0.14); }
+@media (hover: hover) {
+  .slot--tap.slot--todo:hover { background: var(--ios-blue); color: #fff; }
+  .slot--tap.slot--catchup:hover { background: var(--ios-orange); color: #fff; }
+  button.slot--done:hover { filter: brightness(1.08); }
+}
+.week-card__help { font-size: 13px; color: var(--ios-blue); margin-top: var(--space-1); }
+.week-card__chevron { width: 16px; height: 16px; color: var(--text-tertiary); flex-shrink: 0; }
+.week-card__chevron svg { width: 100%; height: 100%; }
+
+/* ─── Toast avec action (Annuler) ─────────────────────────────── */
+
+.toast--action { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.toast__action { color: #fff; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-full); background: rgba(255, 255, 255, 0.22); cursor: pointer; flex-shrink: 0; }
+
+/* ─── Feuille de saisie ───────────────────────────────────────── */
+
+.log-question { display: block; font-size: 17px; font-weight: 600; margin-bottom: var(--space-3); }
+.log-preview { margin-bottom: var(--space-2); }
+.log-switch { display: block; margin-bottom: var(--space-4); padding: 0; }
+
+/* ─── Accueil : en pause et terminés ──────────────────────────── */
+
+.others { margin-top: var(--space-4); }
+.others__summary { cursor: pointer; list-style: none; }
+.others__summary::-webkit-details-marker { display: none; }
+.others__summary::before { content: '›'; display: inline-block; margin-right: 6px; transition: transform var(--duration-fast); }
+.others[open] .others__summary::before { transform: rotate(90deg); }
+.others__list { padding: var(--space-1) var(--space-4); }
+.others__row { display: flex; align-items: center; gap: var(--space-3); width: 100%; padding: var(--space-3) 0; border-bottom: 0.5px solid var(--separator); color: var(--text-primary); text-align: left; cursor: pointer; }
+.others__row:last-child { border-bottom: none; }
+.others__name { flex: 1; min-width: 0; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

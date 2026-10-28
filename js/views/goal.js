@@ -6,28 +6,19 @@ import { formatRange, formatDate, formatDateShort, addDays, daysBetween } from '
 import { esc, progressBar, ICONS } from '../utils/ui.js';
 import { showToast } from '../toast.js';
 import { refreshSidebar } from '../app.js';
-import { topbar } from './chrome.js';
+import { topbar, globalTabBar } from './chrome.js';
 import { weekCard, statusInfo, slotsHtml, weekNotes } from './goal-ui.js';
-import { openLogSheet } from './log-sheet.js';
+import { bindQuickLog } from './quick-log.js';
 import { burnupChart } from './chart.js';
 
 export function mount(container, id) {
-  if (!getGoal(id)) { location.hash = '/goals'; return; }
+  if (!getGoal(id)) { location.hash = '/'; return; }
   container.innerHTML = `<div class="view"></div>`;
   const root = container.firstElementChild;
   const rerender = () => render(root, id);
 
+  bindQuickLog(root, rerender);
   root.addEventListener('click', async e => {
-    const log = e.target.closest('[data-log]');
-    if (log) { openLogSheet(id, { onDone: rerender }); return; }
-
-    const edit = e.target.closest('[data-session]');
-    if (edit) {
-      const session = getSessions(id).find(x => x.id === edit.dataset.session);
-      if (session) openLogSheet(id, { session, onDone: rerender });
-      return;
-    }
-
     const off = e.target.closest('[data-off]');
     if (off) {
       const goal = getGoal(id);
@@ -59,7 +50,7 @@ function render(root, id) {
     ${topbar({
       title: g.name,
       subtitle: `${kind.label} · échéance ${formatDateShort(g.deadline)}${S ? ` · ${S} séance${S > 1 ? 's' : ''}/sem.` : ''}`,
-      back: { label: 'Objectifs', path: '/goals' },
+      back: { label: 'Semaine', path: '/' },
       actions: `<button class="icon-btn" data-nav="/goal/${id}/duplicate" aria-label="Dupliquer" title="Dupliquer (saison suivante, tome 2…)">${ICONS.copy}</button>
         <button class="icon-btn" data-nav="/goal/${id}/edit" aria-label="Modifier" title="Modifier">${ICONS.edit}</button>`,
     })}
@@ -114,7 +105,8 @@ function render(root, id) {
           </section>
         </div>
       </div>
-    </main>`;
+    </main>
+    ${globalTabBar('home')}`;
 }
 
 function kpi(label, value, sub, cls = '') {
@@ -165,7 +157,7 @@ function history(s) {
   let pos = s.position;
   return `<div class="history">${list.map(x => {
     const row = `
-      <button class="history__row" data-session="${x.id}">
+      <button class="history__row" data-edit-session="${x.id}" data-goal="${g.id}">
         <div class="history__main">
           <span class="history__amount">+${fmt(x.amount, g)}</span>
           <span class="muted small">${esc(positionLabel(g, pos))}</span>

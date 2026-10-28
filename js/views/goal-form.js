@@ -22,7 +22,7 @@ const LABELS = {
 // duplicateOf : identifiant d'un objectif dont on reprend le réglage (sans les séances)
 export function mount(container, id, { duplicateOf = null } = {}) {
   const editing = id ? getGoal(id) : null;
-  if (id && !editing) { location.hash = '/goals'; return; }
+  if (id && !editing) { location.hash = '/'; return; }
   const source = duplicateOf ? getGoal(duplicateOf) : null;
   const t = today();
   const cur = mondayOf(t);
@@ -42,7 +42,7 @@ export function mount(container, id, { duplicateOf = null } = {}) {
     <div class="view">
       ${topbar({
         title: editing ? 'Modifier l\'objectif' : source ? 'Dupliquer l\'objectif' : 'Nouvel objectif',
-        back: editing ? { label: 'Retour', path: `/goal/${id}` } : { label: 'Objectifs', path: '/goals' },
+        back: editing ? { label: 'Retour', path: `/goal/${id}` } : source ? { label: 'Retour', path: `/goal/${source.id}` } : { label: 'Semaine', path: '/' },
       })}
       <main class="page page--narrow">
         <form id="goal-form" class="form" novalidate>
@@ -259,7 +259,7 @@ export function mount(container, id, { duplicateOf = null } = {}) {
       await deleteGoal(id);
       showToast('Objectif supprimé');
       refreshSidebar();
-      location.hash = '/goals';
+      location.hash = '/';
     } catch (err) { showToast('Erreur : ' + err.message, 'error'); }
   });
 
