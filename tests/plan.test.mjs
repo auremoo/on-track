@@ -102,3 +102,44 @@ test('série en saisons : S2E3', () => {
   assert.equal(episodeLabel(g, 10), 'S1E10');
   assert.equal(episodeLabel(g, 19), null);
 });
+
+// Rien ne se perd à l'arrondi : fait + reste de la semaine + semaines à venir = total exact,
+// et les séances prévues de la semaine totalisent exactement son reste (retard, avance, semaines off…).
+test('arrondis : on retombe toujours sur le total exact', () => {
+  let seed = 42;
+  const rnd = n => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed % n; };
+  const mondays = ['2026-10-26', '2026-11-02', '2026-11-09', '2026-11-16', '2026-11-23', '2026-11-30', '2026-12-07', '2026-12-14'];
+  let checked = 0;
+  for (let k = 0; k < 3000; k++) {
+    const nWeeks = 2 + rnd(7);
+    const goal = {
+      from: rnd(3) ? 0 : rnd(50), total: 60 + rnd(900), sessionsPerWeek: rnd(4) ? 1 + rnd(5) : null,
+      startWeek: mondays[0], deadline: mondays[nWeeks - 1], offWeeks: rnd(3) ? [] : [mondays[1 + rnd(nWeeks - 1)]],
+    };
+    const curIdx = rnd(nWeeks);
+    const sessions = [];
+    for (let i = 0; i <= curIdx; i++) {
+      for (let j = rnd(4); j > 0; j--) sessions.push(s(mondays[i], 1 + rnd(80), `${mondays[i]}T0${j}:00:00Z`));
+    }
+    const r = computeGoal(goal, sessions, mondays[curIdx]);
+    if (r.status === 'done' || !r.current || r.current.off) continue;
+    const future = r.weeks.filter(w => w.status === 'future').reduce((a, w) => a + w.target, 0);
+    assert.equal(r.done + r.current.remaining + future, r.amount, JSON.stringify({ goal, curIdx, sessions }));
+    assert.equal(r.current.planned.reduce((a, n) => a + n, 0), r.current.remaining);
+    for (const w of r.weeks.filter(w => w.status === 'future')) {
+      assert.equal(w.planned.reduce((a, n) => a + n, 0), w.target);
+    }
+    checked++;
+  }
+  assert.ok(checked > 1000, `${checked} cas vérifiés`);
+});
+
+test('livre de 467 pages : 32 + 32 + 13 × 31 = 467, séances 11 + 11 + 10', () => {
+  const klara = { kind: 'book', from: 0, total: 467, sessionsPerWeek: 3, startWeek: '2026-10-26', deadline: '2027-02-07', offWeeks: [] };
+  const r = computeGoal(klara, [], '2026-10-26');
+  assert.equal(r.weeks.reduce((a, w) => a + w.target, 0), 467);
+  assert.deepEqual(r.current.planned, [11, 11, 10]);
+  // Avance : 60 pages la 1re semaine → le reste (407) est redécoupé sans perte
+  const fast = computeGoal(klara, [s('2026-10-26', 60)], '2026-11-02');
+  assert.equal(fast.done + fast.current.remaining + fast.weeks.filter(w => w.status === 'future').reduce((a, w) => a + w.target, 0), 467);
+});
