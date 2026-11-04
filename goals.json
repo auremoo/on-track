@@ -14,6 +14,20 @@
       "status": "active",
       "createdAt": "2026-10-28T13:26:59.049Z",
       "offWeeks": []
+    },
+    {
+      "kind": "book",
+      "name": "Les 6 piliers de la coopération",
+      "total": 172,
+      "from": 0,
+      "deadline": "2026-11-30",
+      "sessionsPerWeek": 3,
+      "startWeek": "2026-11-02",
+      "unit": null,
+      "seasons": null,
+      "id": "les-6-piliers-de-la-cooperation",
+      "status": "active",
+      "createdAt": "2026-11-04T14:50:26.437Z"
     }
   ]
 }
