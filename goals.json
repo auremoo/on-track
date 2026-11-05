@@ -28,6 +28,20 @@
       "id": "les-6-piliers-de-la-cooperation",
       "status": "active",
       "createdAt": "2026-11-04T14:50:26.437Z"
+    },
+    {
+      "kind": "book",
+      "name": "A Game of Thrones",
+      "total": 1318,
+      "from": 0,
+      "deadline": "2027-06-30",
+      "sessionsPerWeek": 2,
+      "startWeek": "2026-11-09",
+      "unit": null,
+      "seasons": null,
+      "id": "a-game-of-thrones",
+      "status": "active",
+      "createdAt": "2026-11-05T18:07:26.910Z"
     }
   ]
 }
