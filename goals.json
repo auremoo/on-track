@@ -27,7 +27,10 @@
       "seasons": null,
       "id": "les-6-piliers-de-la-cooperation",
       "status": "active",
-      "createdAt": "2026-11-04T14:50:26.437Z"
+      "createdAt": "2026-11-04T14:50:26.437Z",
+      "offWeeks": [
+        "2026-11-09"
+      ]
     },
     {
       "kind": "book",
