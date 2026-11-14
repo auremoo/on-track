@@ -43,6 +43,20 @@
       "id": "a-game-of-thrones",
       "status": "active",
       "createdAt": "2026-11-05T18:07:26.910Z"
+    },
+    {
+      "kind": "book",
+      "name": "Shibumi",
+      "total": 514,
+      "from": 110,
+      "deadline": "2027-02-14",
+      "sessionsPerWeek": 1,
+      "startWeek": "2026-11-09",
+      "unit": null,
+      "seasons": null,
+      "id": "shibumi",
+      "status": "active",
+      "createdAt": "2026-11-14T18:05:03.358Z"
     }
   ]
 }
