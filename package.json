@@ -1,5 +1,6 @@
 {
   "name": "on-track",
+  "author": "Aurélien Moote - Moo - 2026",
   "private": true,
   "type": "module",
   "scripts": {
